@@ -20,7 +20,7 @@ def select_interest():
     if interest=='eonia':
         print(red['Eonia'])
     elif interest=='Euribor': 
-        ask=input('Specify the lenght of Euribor').lower()
+        ask=input('Specify the length of Euribor').lower()
         if ask=='1 kk' or ask=='1' or ask=='1kk':
             print(red['Euribor 1kk'])
         elif ask=='3kk' or ask=='3' or ask=='3 kk':
