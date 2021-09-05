@@ -33,5 +33,5 @@ def select_interest():
             print(f'Euribor {ask} was not found')
     else:
         print(f'Please check spelling for {interest} or give a valid interest')
-
-select_interest()
+if __name__ == "__main__":
+    select_interest()
