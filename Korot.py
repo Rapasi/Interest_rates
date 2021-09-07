@@ -56,7 +56,7 @@ while True:
     elif rep=='y' or rep=='yes':
         continue
     else:
-        print('I askd you a simple question?!!')
+        print('I asked you a simple question?!!')
         break
 plt.show()
 
