@@ -2,36 +2,63 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-data=pd.read_excel(r"C:\Users\ramie\Downloads\korot.xlsx",header=4,index_col='Ajanjakso')
-mod=data.iloc[:-3]
-red=mod.iloc[::-1]
-red.columns=['Eonia','Euribor 1kk','Euribor 3kk','Euribor 6kk','Euribor 12kk']
-r""" fig, ax = plt.subplots(figsize=(12,7))
-ax.set_xlabel('Ajanjakso',fontsize=16)
-ax.set_ylabel('Korko',fontsize=16)
-ax.set_title('Korot 2008-2021',fontsize=16)
-ax.plot(red)
-plt.xticks(red.index[::12],rotation=30)
-plt.gcf().subplots_adjust(bottom=0.15)
-plt.show() """
+path_lnx='~/Rami/Python_projects/Interest_rates.xlsx'
+path_windows=r'C:\Users\ramie\Downloads\korot.xlsx'
 
-def select_interest():
-    interest=input('Which interest rate would you like to select?').lower()
+data=pd.read_excel(path_lnx,header=4,index_col='Period')
+mod=data.iloc[:-2]
+red=mod.iloc[::-1]
+
+column_titles=['Eonia','Euribor 1kk','Euribor 3kk','Euribor 6kk','Euribor 12kk']
+red.columns=column_titles
+
+def graph(Interest,Title):    
+    fig=plt.figure(figsize=(12,7))
+    plt.xlabel('Ajanjakso',fontsize=16)
+    plt.ylabel('Korko',fontsize=16)
+    plt.title(Title,fontsize=16)
+    plt.plot(Interest)
+    plt.xticks(red.index[::12],rotation=30)
+    plt.gcf().subplots_adjust(bottom=0.15)
+    plt.legend()
+    plt.pause(0.0001)
+
+
+while True:
+    interest=input('Which interest rate would you like to select? ').lower()
     if interest=='eonia':
         print(red['Eonia'])
-    elif interest=='Euribor': 
-        ask=input('Specify the length of Euribor').lower()
+        graph(red['Eonia'],f'{column_titles[0]} 1999-2021')
+    elif interest=='Euribor' or interest=='euribor': 
+        ask=input('Specify the length of Euribor. ').lower()
         if ask=='1 kk' or ask=='1' or ask=='1kk':
             print(red['Euribor 1kk'])
+            graph(red['Euribor 1kk'],f'{column_titles[1]} 1999-2021')
         elif ask=='3kk' or ask=='3' or ask=='3 kk':
             print(red['Euribor 3kk'])
+            graph(red['Euribor 3kk'],f'{column_titles[2]} 1999-2021')
         elif ask=='6kk' or ask=='6' or ask=='6 kk': 
             print(red['Euribor 6kk'])
+            graph(red['Euribor 6kk'],f'{column_titles[3]} 1999-2021')
         elif ask=='12kk' or ask=='12' or ask=='12 kk':
             print(red['Euribor 12kk'])
+            graph(red['Euribor 12kk'],f'{column_titles[4]} 1999-2021')
         else:
             print(f'Euribor {ask} was not found')
+    elif interest=='All' or interest=='all':
+            print(red)
+            graph(red,f'All interest rates 1999-2021')
     else:
-        print(f'Please check spelling for {interest} or give a valid interest')
+        print(f'Please check spelling for "{interest}" or give a valid interest.')
+    rep=input('Would you like to graph another one? Y/N ').lower()
+    if rep=='no' or rep=='n':
+        break
+    elif rep=='y' or rep=='yes':
+        continue
+    else:
+        print('I askd you a simple question?!!')
+        break
+plt.show()
+
 if __name__ == "__main__":
-    select_interest()
+    pass
