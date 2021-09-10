@@ -2,15 +2,24 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+# Selected paths work only on my computers
+
 path_lnx='~/Rami/Python_projects/Interest_rates.xlsx'
 path_windows=r'C:\Users\ramie\Downloads\korot.xlsx'
+
+# Reading csv as pandas dataframe and modifying it a litle. 
 
 data=pd.read_excel(path_lnx,header=4,index_col='Period')
 mod=data.iloc[:-2]
 red=mod.iloc[::-1]
 
+# Changing column titles.
+
 column_titles=['Eonia','Euribor 1kk','Euribor 3kk','Euribor 6kk','Euribor 12kk']
 red.columns=column_titles
+
+# Defining a function to graph plots.
 
 def graph(Interest,Title):    
     fig=plt.figure(figsize=(12,7))
@@ -23,6 +32,7 @@ def graph(Interest,Title):
     plt.legend()
     plt.pause(0.0001)
 
+# The body
 
 while True:
     interest=input('Which interest rate would you like to select? ').lower()
