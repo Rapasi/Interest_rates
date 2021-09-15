@@ -2,6 +2,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import tkinter as tk
+import pandas_datareader as pdr
+import yfinance as yf
+from datetime import datetime
+
 
 Height=800
 Width=1000
@@ -10,6 +14,9 @@ Width=1000
 
 path_lnx='~/Rami/Interest_rates/Interest_rates.xlsx'
 path_windows=r'C:\Users\ramie\Downloads\korot.xlsx'
+
+#lnx_stocks='~/Rami/Interest_rates\Kuvaaja_{0}.png'.format(i)
+#save_fig_windows=r'C:\Users\ramie\Projects\Kuvaaja_{0}.png'.format(i)
 
 # Reading csv as pandas dataframe and modifying it a litle. 
 
@@ -69,11 +76,89 @@ def graph(final):
         label.place(relwidth=1,relheight=1)
 
 
+
+start=datetime(2018,1,1)
+end=datetime.today()
+# Dimensions of document (not accurate currently)
+
+WIDTH=210
+HEIGHT=590
+
+# List of stocks to plot
+
+def get_name(osake_list):
+    company_names=[]
+    for name in osake_list:
+        osake=yf.Ticker(name)
+        company_name=osake.info['longName']
+        company_names.append(company_name)
+    return(company_names)
+
+colours=['r','g','b','k','c','y','m','teal','sienna']
+osakkeet=['ORTHEX.HE','WRT1V.HE','TYRES.HE','UPM.HE','METSB.HE','SHOT.ST','ZIGN.ST','OUT1V.HE','FIA1S.HE']
+stock_names=get_name(osakkeet)
+
+label_list = [
+    pd.to_datetime("2021-07-21"),
+    pd.to_datetime("2019-11-29"), 
+    pd.to_datetime("2019-01-09"),
+    (pd.to_datetime("2020-03-31"), pd.to_datetime("2019-06-27")),
+    pd.to_datetime("2019-06-03"), 
+    pd.to_datetime("2020-10-16"), 
+    (pd.to_datetime("2021-01-04"), pd.to_datetime("2021-08-11")),
+    (pd.to_datetime("2021-05-08"), pd.to_datetime("2019-02-13")),
+    (pd.to_datetime("2020-06-11"), pd.to_datetime("2019-07-25"),pd.to_datetime("2018-11-27"))]
+
+# Functions to download stock prices and plot graphs
+
+def open_stock(Osake):
+    osake=pdr.DataReader(Osake,'yahoo',start,end)
+    hinta=osake['Adj Close']
+    return(hinta)
+
+my_stocks=open_stock(osakkeet)
+
+def kuvaaja(Osake):
+    ax=plt.gca()
+    plt.close()
+    plt.figure(figsize=(12,8))
+    plt.plot(my_stocks[Osake])
+    plt.xlabel('Aika',fontsize=14)
+    plt.xticks(rotation=20)
+    plt.title(stock_names[Osake],fontsize=18)
+    plt.ylabel('Hinta',fontsize=14)
+    plt.savefig('~/Rami/Interest_rates\Kuvaaja.png')
+    # plt.figure(figsize=(12,8))
+    # plt.xlabel('Aika',fontsize=14)
+    # plt.title('All stocks',fontsize=18)
+    # plt.ylabel('Hinta',fontsize=14)
+    # plt.plot(open_stock(osakkeet))
+    # plt.savefig(r'C:\Users\ramie\Projects\Kuvaaja_all.png')
+    stock_img= tk.PhotoImage(file='Kuvaaja.png')
+    vlabel.configure(image=stock_img)
+    vlabel.photo=stock_img
+    vlabel.pack(side = "bottom",fill='both')
+
+def select_stock():
+    selected_stock=drop_stocks.get()
+    return(selected_stock)
+
+def select_rate():
+    selected_rate=variable.get()
+    return(selected_rate)
+
 root = tk.Tk()
+
+drop_stocks=tk.StringVar(root)
+drop_stocks.set('Stocks')
+w=tk.OptionMenu(root,drop_stocks,*osakkeet)
+w.pack(side='top')
+
+stock_button=tk.Button(root, text='Select stocks',command=lambda: kuvaaja(open_stock(select_stock()))).pack()
+
 
 vlabel=tk.Label(root)
 vlabel.pack()
-
 canvas=tk.Canvas(root,height=Height,width=Width)
 canvas.pack()
 
@@ -83,11 +168,9 @@ variable.set('Interest rate')
 w=tk.OptionMenu(root,variable,*column_titles,'All')
 w.pack()
 
-def select():
-    selected=variable.get()
-    return(selected)
 
-button=tk.Button(root, text='Select interest rate',command=lambda: graph(select())).pack()
+
+interest_button=tk.Button(root, text='Select interest rate',command=lambda: graph(select_rate())).pack()
 
 
 root.mainloop()
